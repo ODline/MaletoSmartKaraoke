@@ -1,3 +1,4 @@
+import 'judge_evaluation.dart';
 import 'package:flutter/material.dart';
 
 class JudgeSelectionScreen extends StatefulWidget {
@@ -125,6 +126,29 @@ class _JudgeSelectionScreenState extends State<JudgeSelectionScreen> {
             const SizedBox(height: 15),
             // Tombol Mulai Kompetisi (Hanya aktif jika 3 juri dipilih)
             ElevatedButton(
+              onPressed: selectedJudges.length == 3 ? () {
+                // Menyimpan nama 3 juri yang dipilih
+                List<String> chosenJudges = selectedJudges.map((index) => judges[index]).toList();
+                
+                // Berpindah ke layar Evaluasi sambil membawa nama juri
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => JudgeEvaluationScreen(selectedJudgeNames: chosenJudges),
+                  ),
+                );
+              } : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFD700),
+                disabledBackgroundColor: Colors.grey[800],
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              ),
+              child: const Text(
+                'MULAI KOMPETISI',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+            ),(
               onPressed: selectedJudges.length == 3 ? () {
                 // Nanti ini akan diarahkan ke halaman Competition Player
                 ScaffoldMessenger.of(context).showSnackBar(
