@@ -1,18 +1,13 @@
-import 'judge_selection.dart';
-import 'practice_mode.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:video_player/video_player.dart';
-import 'karaoke_player.dart';
-import 'mic_client.dart'; // Memanggil antarmuka mikrofon
 import 'song_selection.dart';
+import 'judge_selection.dart';
 
 void main() {
-  runApp(const MaletoApp());
+  runApp(const MaletoKaraokeApp());
 }
 
-class MaletoApp extends StatelessWidget {
-  const MaletoApp({super.key});
+class MaletoKaraokeApp extends StatelessWidget {
+  const MaletoKaraokeApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,198 +15,126 @@ class MaletoApp extends StatelessWidget {
       title: 'Maleto Smart Karaoke',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color(0xFF0A1128),
-        primaryColor: const Color(0xFFFFD700),
-        textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      home: const SplashScreen(),
+      home: const MainMenuScreen(),
     );
   }
 }
 
-// ================= SPLASH SCREEN =================
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  late VideoPlayerController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    // Memaksa landscape untuk splash screen
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
-    
-    _controller = VideoPlayerController.asset('assets/splash.mp4')
-      ..initialize().then((_) {
-        setState(() {});
-        _controller.play();
-        
-        Future.delayed(_controller.value.duration, () {
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
-            );
-          }
-        });
-      });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+class MainMenuScreen extends StatelessWidget {
+  const MainMenuScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: _controller.value.isInitialized
-            ? AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller))
-            : const CircularProgressIndicator(color: Color(0xFFFFD700)),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF0A1128), Color(0xFF1B2A4A)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'MALETO SMART KARAOKE',
+                style: TextStyle(
+                  color: Color(0xFFFFD700),
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2.0,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Pilih Mode Bernyanyi Anda',
+                style: TextStyle(color: Colors.white70, fontSize: 18),
+              ),
+              const SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildMenuCard(
+                    context,
+                    title: 'Normal Mode',
+                    icon: Icons.mic,
+                    color: Colors.blueAccent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SongSelectionScreen(selectedMode: 'Normal Mode'),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 20),
+                  _buildMenuCard(
+                    context,
+                    title: 'Practice Mode',
+                    icon: Icons.trending_up,
+                    color: Colors.orangeAccent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SongSelectionScreen(selectedMode: 'Practice Mode'),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 20),
+                  _buildMenuCard(
+                    context,
+                    title: 'Competition Mode',
+                    icon: Icons.emoji_events,
+                    color: Colors.purpleAccent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const JudgeSelectionScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
-}
 
-// ================= ROLE SELECTION (PILIH PERANGKAT) =================
-class RoleSelectionScreen extends StatelessWidget {
-  const RoleSelectionScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+  Widget _buildMenuCard(BuildContext context, {required String title, required IconData icon, required Color color, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        width: 220,
+        height: 180,
+        decoration: BoxDecoration(
+          color: Colors.black45,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: color, width: 2),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'PILIH MODE PERANGKAT',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFFFFD700)),
-            ),
-            const SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildRoleButton(context, 'Layar TV', Icons.tv, true),
-                const SizedBox(width: 40),
-                _buildRoleButton(context, 'Mikrofon HP', Icons.smartphone, false),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRoleButton(BuildContext context, String title, IconData icon, bool isTV) {
-    return InkWell(
-      onTap: () {
-        if (isTV) {
-          Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const HomeScreen())
-          );
-        } else {
-          Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const MicClientScreen())
-          );
-        }
-      },
-      focusColor: const Color(0xFFFFD700).withOpacity(0.4),
-      borderRadius: BorderRadius.circular(15),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
-        decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFFFD700), width: 2),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 80, color: Colors.white),
+            Icon(icon, size: 60, color: color),
             const SizedBox(height: 15),
-            Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ================= HOME SCREEN (LAYAR TV) =================
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
-    
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/Logo.png', height: 120),
-            const SizedBox(height: 20),
-            const Text('MALETO SMART KARAOKE', style: TextStyle(fontSize: 54, fontWeight: FontWeight.bold, color: Color(0xFFFFD700))),
-            const SizedBox(height: 10),
-            const Text('Your Voice. Your Stage.', style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic, color: Colors.white70)),
-            const SizedBox(height: 60),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildMenuButton(context, 'Normal Mode', Icons.mic, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const KaraokePlayerScreen()));
-                }),
-                const SizedBox(width: 30),
-                _buildMenuButton(context, 'Practice Mode', Icons.analytics, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PracticeModeScreen()));
-                }),
-                const SizedBox(width: 30),
-                _buildMenuButton(context, 'Competition Mode', Icons.star, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const JudgeSelectionScreen()));
-                }),
-              ],
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
             ),
-                const SizedBox(width: 30),
-                _buildMenuButton(context, 'Competition Mode', Icons.star, () {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => const JudgeSelectionScreen()));
-}),,
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuButton(BuildContext context, String title, IconData icon, VoidCallback onTapAction) {
-    return InkWell(
-      onTap: onTapAction,
-      focusColor: const Color(0xFFFFD700).withOpacity(0.4),
-      borderRadius: BorderRadius.circular(15),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
-        decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFFFD700), width: 2),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 50, color: Colors.white),
-            const SizedBox(height: 15),
-            Text(title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
           ],
         ),
       ),
