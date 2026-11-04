@@ -8,7 +8,6 @@ class SongSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Daftar lagu dengan ID YouTube nyata
     final List> songs = [
       {'title': 'Kangen', 'artist': 'Dewa 19', 'ytId': '2X-1t6y32Z8'},
       {'title': 'Pupus', 'artist': 'Dewa 19', 'ytId': '9597_3840h0'},
@@ -28,7 +27,7 @@ class SongSelectionScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('"${song['title']}" ditambahkan ke Antrean (Playlist)!'), backgroundColor: Colors.blueAccent),
+                  SnackBar(content: Text('"${song['title']}" ditambahkan ke Antrean!'), backgroundColor: Colors.blueAccent),
                 );
               },
               child: const Text('Tambah ke Antrean', style: TextStyle(color: Colors.white)),
