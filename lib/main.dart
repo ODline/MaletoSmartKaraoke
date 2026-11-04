@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:video_player/video_player.dart';
 
 void main() {
   runApp(const MaletoApp());
@@ -26,11 +27,65 @@ class MaletoApp extends StatelessWidget {
           bodyMedium: TextStyle(color: Colors.white),
         ),
       ),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }
 
+// ================= SPLASH SCREEN =================
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Memuat video dari folder assets
+    _controller = VideoPlayerController.asset('assets/splash.mp4')
+      ..initialize().then((_) {
+        setState(() {});
+        _controller.play();
+        
+        // Pindah ke halaman utama setelah durasi video selesai
+        Future.delayed(_controller.value.duration, () {
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          }
+        });
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black, // Background hitam saat video diputar
+      body: Center(
+        child: _controller.value.isInitialized
+            ? AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: VideoPlayer(_controller),
+              )
+            : const CircularProgressIndicator(color: Color(0xFFFFD700)),
+      ),
+    );
+  }
+}
+
+// ================= HOME SCREEN =================
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -46,6 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Menampilkan Logo Aplikasi
+            Image.asset(
+              'assets/Logo.png',
+              height: 120, // Sesuaikan ukuran logo jika perlu
+            ),
+            const SizedBox(height: 20),
             const Text(
               'MALETO SMART KARAOKE',
               style: TextStyle(fontSize: 54, fontWeight: FontWeight.bold, color: Color(0xFFFFD700)),
@@ -72,11 +133,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Desain tombol yang akan menyala (highlight) saat disorot remote TV
   Widget _buildMenuButton(String title, IconData icon) {
     return InkWell(
       onTap: () {},
-      focusColor: const Color(0xFFFFD700).withOpacity(0.4), // Efek nyala emas saat disorot remote
+      focusColor: const Color(0xFFFFD700).withOpacity(0.4),
       borderRadius: BorderRadius.circular(15),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
