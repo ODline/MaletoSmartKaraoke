@@ -1,3 +1,4 @@
+import 'judge_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -174,7 +175,9 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(width: 30),
                 _buildMenuButton(context, 'Practice Mode', Icons.analytics, () {}),
                 const SizedBox(width: 30),
-                _buildMenuButton(context, 'Competition Mode', Icons.star, () {}),
+                _buildMenuButton(context, 'Competition Mode', Icons.star, () {
+  Navigator.push(context, MaterialPageRoute(builder: (context) => const JudgeSelectionScreen()));
+}),,
               ],
             ),
           ],
