@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+import 'karaoke_player.dart'; // Memanggil file karaoke yang baru dibuat
 
 void main() {
   runApp(const MaletoApp());
@@ -11,7 +12,6 @@ class MaletoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Memaksa tampilan landscape untuk layar TV
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -21,18 +21,15 @@ class MaletoApp extends StatelessWidget {
       title: 'Maleto Smart Karaoke',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFF0A1128), // Warna Dark Navy
-        primaryColor: const Color(0xFFFFD700), // Warna Emas
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: Colors.white),
-        ),
+        scaffoldBackgroundColor: const Color(0xFF0A1128),
+        primaryColor: const Color(0xFFFFD700),
+        textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
       home: const SplashScreen(),
     );
   }
 }
 
-// ================= SPLASH SCREEN =================
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -46,13 +43,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Memuat video dari folder assets
     _controller = VideoPlayerController.asset('assets/splash.mp4')
       ..initialize().then((_) {
         setState(() {});
         _controller.play();
         
-        // Pindah ke halaman utama setelah durasi video selesai
         Future.delayed(_controller.value.duration, () {
           if (mounted) {
             Navigator.of(context).pushReplacement(
@@ -72,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Background hitam saat video diputar
+      backgroundColor: Colors.black,
       body: Center(
         child: _controller.value.isInitialized
             ? AspectRatio(
@@ -85,7 +80,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// ================= HOME SCREEN =================
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -101,11 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Menampilkan Logo Aplikasi
-            Image.asset(
-              'assets/Logo.png',
-              height: 120, // Sesuaikan ukuran logo jika perlu
-            ),
+            Image.asset('assets/Logo.png', height: 120),
             const SizedBox(height: 20),
             const Text(
               'MALETO SMART KARAOKE',
@@ -120,11 +110,21 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildMenuButton('Normal Mode', Icons.mic),
+                _buildMenuButton(
+                  'Normal Mode', 
+                  Icons.mic, 
+                  () {
+                    // Perintah untuk pindah ke halaman Karaoke Player
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const KaraokePlayerScreen()),
+                    );
+                  }
+                ),
                 const SizedBox(width: 30),
-                _buildMenuButton('Practice Mode', Icons.analytics),
+                _buildMenuButton('Practice Mode', Icons.analytics, () {}),
                 const SizedBox(width: 30),
-                _buildMenuButton('Competition Mode', Icons.star),
+                _buildMenuButton('Competition Mode', Icons.star, () {}),
               ],
             ),
           ],
@@ -133,9 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildMenuButton(String title, IconData icon) {
+  Widget _buildMenuButton(String title, IconData icon, VoidCallback onTapAction) {
     return InkWell(
-      onTap: () {},
+      onTap: onTapAction,
       focusColor: const Color(0xFFFFD700).withOpacity(0.4),
       borderRadius: BorderRadius.circular(15),
       child: Container(
