@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'karaoke_player.dart';
-import 'practice_mode.dart';
-import 'judge_selection.dart';
+import 'youtube_player_screen.dart';
 
 class SongSelectionScreen extends StatelessWidget {
   final String selectedMode;
@@ -10,15 +8,60 @@ class SongSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Simulasi daftar lagu (Bisa diganti dengan data dari API/YouTube nanti)
+    // Daftar lagu dengan ID YouTube nyata
     final List> songs = [
-      {'title': 'Aku Cinta Kau dan Dia', 'artist': 'Ahmad Dhani / Dewa 19'},
-      {'title': 'Kangen', 'artist': 'Dewa 19'},
-      {'title': 'Pupus', 'artist': 'Dewa 19'},
-      {'title': 'Separuh Nafas', 'artist': 'Dewa 19'},
-      {'title': 'Risalah Hati', 'artist': 'Dewa 19'},
-      {'title': 'Cinta Kan Membawamu Kembali', 'artist': 'Dewa 19'},
+      {'title': 'Kangen', 'artist': 'Dewa 19', 'ytId': '2X-1t6y32Z8'},
+      {'title': 'Pupus', 'artist': 'Dewa 19', 'ytId': '9597_3840h0'},
+      {'title': 'Aku Cinta Kau dan Dia', 'artist': 'Dewa 19', 'ytId': 'dQw4w9WgXcQ'},
+      {'title': 'Separuh Nafas', 'artist': 'Dewa 19', 'ytId': '3JZ_D3ELwOQ'},
     ];
+
+    void showSongOptions(BuildContext context, Map<String, String> song) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFF0A1128),
+          title: Text(song['title']!, style: const TextStyle(color: Color(0xFFFFD700))),
+          content: Text('Pilih tindakan untuk lagu ${song['artist']}?', style: const TextStyle(color: Colors.white75)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('"${song['title']}" ditambahkan ke Antrean (Playlist)!'), backgroundColor: Colors.blueAccent),
+                );
+              },
+              child: const Text('Tambah ke Antrean', style: TextStyle(color: Colors.white)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Mengunduh "${song['title']}"...'), backgroundColor: Colors.orangeAccent),
+                );
+              },
+              child: const Text('Download', style: TextStyle(color: Colors.orangeAccent)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFD700)),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => YoutubePlayerScreen(
+                      videoId: song['ytId']!,
+                      songTitle: song['title']!,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Putar Sekarang', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFF0A1128),
@@ -45,20 +88,8 @@ class SongSelectionScreen extends StatelessWidget {
                 itemCount: songs.length,
                 itemBuilder: (context, index) {
                   return InkWell(
-                    onTap: () {
-                      // Mengarahkan ke panggung yang tepat sesuai mode yang dipilih di awal
-                      Widget nextScreen;
-                      if (selectedMode == 'NORMAL MODE') {
-                        nextScreen = const KaraokePlayerScreen();
-                      } else if (selectedMode == 'PRACTICE MODE') {
-                        nextScreen = const PracticeModeScreen();
-                      } else {
-                        nextScreen = const JudgeSelectionScreen();
-                      }
-
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => nextScreen));
-                    },
-                    focusColor: const Color(0xFFFFD700).withOpacity(0.3), // Highlight remote TV
+                    onTap: () => showSongOptions(context, songs[index]),
+                    focusColor: const Color(0xFFFFD700).withOpacity(0.3),
                     borderRadius: BorderRadius.circular(10),
                     child: Card(
                       color: Colors.black54,
@@ -78,7 +109,7 @@ class SongSelectionScreen extends StatelessWidget {
                           songs[index]['artist']!,
                           style: const TextStyle(color: Colors.white70, fontSize: 18),
                         ),
-                        trailing: const Icon(Icons.play_circle_fill, color: Colors.white54, size: 40),
+                        trailing: const Icon(Icons.play_circle_fill, color: Color(0xFFFFD700), size: 40),
                       ),
                     ),
                   );
