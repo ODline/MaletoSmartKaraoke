@@ -9,28 +9,11 @@ class JudgeSelectionScreen extends StatefulWidget {
 }
 
 class _JudgeSelectionScreenState extends State<JudgeSelectionScreen> {
-  // Data lengkap 20 Juri sesuai Master Blueprint
-  final List> judgesData = [
-    {'name': 'Aham Dhanar', 'trait': 'Sarkastis & Tajam'},
-    {'name': 'Ari Lastra', 'trait': 'Santai & Humoris'},
-    {'name': 'Anan Hermanto', 'trait': 'Tegas & Kritis'},
-    {'name': 'Judira', 'trait': 'Ekspresif & Energik'},
-    {'name': 'Rosana', 'trait': 'Hangat & Suportif'},
-    {'name': 'Bina Citra Lestari', 'trait': 'Emosional (Penghayatan)'},
-    {'name': 'Maida Estania', 'trait': 'Realistis & Strategis'},
-    {'name': 'Tita Diani Jaya', 'trait': 'Elegan & Berwibawa'},
-    {'name': 'Agnes Mova', 'trait': 'Standar Tinggi & Disiplin'},
-    {'name': 'Arman Maulendra', 'trait': 'Komunikatif'},
-    {'name': 'Aril Nohan', 'trait': 'Kalem & Observatif'},
-    {'name': 'Kaka Slan', 'trait': 'Spontan & Jenaka'},
-    {'name': 'Anggita', 'trait': 'Diplomatis & Elegan'},
-    {'name': 'Bebi Romara', 'trait': 'Musikal & Santai'},
-    {'name': 'Afgani', 'trait': 'Kalem & Halus'},
-    {'name': 'Isyana Sarasti', 'trait': 'Kreatif & Ekspresif'},
-    {'name': 'Sherina Munara', 'trait': 'Cerdas & Selektif'},
-    {'name': 'Vidi Aldara', 'trait': 'Ceria & Bersahabat'},
-    {'name': 'Nino Randa', 'trait': 'Strategis & Konseptual'},
-    {'name': 'Giran Ganesa', 'trait': 'Antusias & Emosional'},
+  final List<String> judges = [
+    'Aham Dhanar', 'Ari Lastra', 'Anan Hermanto', 'Judira', 'Rosana',
+    'Bina Citra Lestari', 'Maida Estania', 'Tita Diani Jaya', 'Agnes Mova', 'Arman Maulendra',
+    'Aril Nohan', 'Kaka Slan', 'Anggita', 'Bebi Romara', 'Afgani',
+    'Isyana Sarasti', 'Sherina Munara', 'Vidi Aldara', 'Nino Randa', 'Giran Ganesa'
   ];
 
   List<int> selectedJudges = [];
@@ -77,7 +60,7 @@ class _JudgeSelectionScreenState extends State<JudgeSelectionScreen> {
                   mainAxisSpacing: 10,
                   childAspectRatio: 0.85,
                 ),
-                itemCount: judgesData.length,
+                itemCount: judges.length,
                 itemBuilder: (context, index) {
                   bool isSelected = selectedJudges.contains(index);
                   return InkWell(
@@ -94,18 +77,12 @@ class _JudgeSelectionScreenState extends State<JudgeSelectionScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.face, size: 50, color: isSelected ? Colors.black : Colors.white54), // Nanti bisa diganti Image.asset
+                          Icon(Icons.face, size: 50, color: isSelected ? Colors.black : Colors.white54),
                           const SizedBox(height: 5),
                           Text(
-                            judgesData[index]['name']!,
+                            judges[index],
                             textAlign: TextAlign.center,
                             style: TextStyle(color: isSelected ? Colors.black : Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            judgesData[index]['trait']!,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: isSelected ? Colors.black87 : Colors.white60, fontSize: 11, fontStyle: FontStyle.italic),
                           ),
                         ],
                       ),
@@ -117,8 +94,7 @@ class _JudgeSelectionScreenState extends State<JudgeSelectionScreen> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: selectedJudges.length == 3 ? () {
-                // Membawa data lengkap 3 juri yang dipilih
-                List> chosenJudges = selectedJudges.map((i) => judgesData[i]).toList();
+                List> chosenJudges = selectedJudges.map((i) => {'name': judges[i], 'trait': 'Karakter Juri'}).toList();
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => JudgeEvaluationScreen(selectedJudgesData: chosenJudges)));
               } : null,
               style: ElevatedButton.styleFrom(
