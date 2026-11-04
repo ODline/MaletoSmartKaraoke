@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import 'karaoke_player.dart';
 import 'mic_client.dart'; // Memanggil antarmuka mikrofon
+import 'song_selection.dart';
 
 void main() {
   runApp(const MaletoApp());
@@ -175,8 +176,14 @@ class HomeScreen extends StatelessWidget {
                 }),
                 const SizedBox(width: 30),
                 _buildMenuButton(context, 'Practice Mode', Icons.analytics, () {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => const PracticeModeScreen()));
-}),,
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PracticeModeScreen()));
+                }),
+                const SizedBox(width: 30),
+                _buildMenuButton(context, 'Competition Mode', Icons.star, () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const JudgeSelectionScreen()));
+                }),
+              ],
+            ),
                 const SizedBox(width: 30),
                 _buildMenuButton(context, 'Competition Mode', Icons.star, () {
   Navigator.push(context, MaterialPageRoute(builder: (context) => const JudgeSelectionScreen()));
