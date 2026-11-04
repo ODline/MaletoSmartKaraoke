@@ -1,0 +1,37 @@
+name: Build Maleto APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Ambil Kode dari Repositori
+      uses: actions/checkout@v4
+
+    - name: Siapkan Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Siapkan Mesin Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Pasang Modul (Dependencies)
+      run: flutter pub get
+
+    - name: Rakit APK
+      run: flutter build apk --release
+
+    - name: Simpan APK agar bisa di-download
+      uses: actions/upload-artifact@v4
+      with:
+        name: Maleto-APK
+        path: build/app/outputs/flutter-apk/app-release.apk
