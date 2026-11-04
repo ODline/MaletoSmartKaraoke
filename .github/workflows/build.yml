@@ -26,7 +26,7 @@ jobs:
           flutter-version: '3.19.x'
           channel: 'stable'
 
-      - name: Clean Build Cache
+      - name: Clean Project Build Cache
         run: flutter clean
 
       - name: Install Dependencies
