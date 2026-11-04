@@ -27,6 +27,9 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Upgrade Android Project
+        run: flutter create . --platforms=android
+
       - name: Install Dependencies
         run: flutter pub get
 
