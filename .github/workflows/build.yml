@@ -26,7 +26,7 @@ jobs:
           channel: 'stable'
 
       - name: Generate Android Scaffolding
-        run: flutter create . --platforms=android --org com.maleto.karaoke
+  run: flutter create . --platforms=android --org com.maleto.karaoke --project-name maletosmartkaraoke
 
       - name: Install Dependencies
         run: flutter pub get
